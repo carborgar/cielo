@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fancy AEMET",
+  title: "Cielo",
   description: "Tu previsión meteorológica, bonita y limpia",
 };
 

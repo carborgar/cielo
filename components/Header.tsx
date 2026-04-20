@@ -8,7 +8,7 @@ export function Header() {
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight">
           <CloudSun size={24} />
-          <span>Fancy AEMET</span>
+          <span>Cielo</span>
         </Link>
         <ThemeToggle />
       </div>
