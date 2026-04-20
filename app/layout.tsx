@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { MunicipiosProvider } from "@/context/MunicipiosContext";
 import { Header } from "@/components/Header";
@@ -32,6 +33,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+        <ClerkProvider>
         <ThemeProvider>
           <MunicipiosProvider>
             <Header />
@@ -40,6 +42,7 @@ export default function RootLayout({
             </main>
           </MunicipiosProvider>
         </ThemeProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

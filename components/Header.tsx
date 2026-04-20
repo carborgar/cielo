@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import { CloudSun } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs';
 
 export function Header() {
   return (
@@ -10,9 +13,26 @@ export function Header() {
           <CloudSun size={24} />
           <span>Cielo</span>
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-3">
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="text-sm font-medium bg-white/20 hover:bg-white/30 transition px-3 py-1.5 rounded-full">
+                Iniciar sesión
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: 'w-8 h-8',
+                },
+              }}
+            />
+          </SignedIn>
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );
 }
-
