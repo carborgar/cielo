@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForecast } from '@/hooks/useForecast';
 import { getSkyInfo, formatDate, windDirArrow, uvColor } from '@/lib/weather';
+import { SkyIcon, skyLabel } from '@/components/SkyIcon';
 import { Thermometer, Droplets, Wind, Umbrella, Snowflake, Zap } from 'lucide-react';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,11 +31,10 @@ export function DailyForecastPanel({ cod }: { cod: string }) {
       <div className="space-y-2">
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         {(dias as any[]).map((dia: any) => {
-          const sky = getSkyInfo(
-            dia.estadoCielo?.find((e: { value?: string }) => e.value)?.value ?? ''
-          );
+          const skyCode = dia.estadoCielo?.find((e: { value?: string }) => e.value)?.value ?? '';
+          const skyDesc = dia.estadoCielo?.find((e: { value?: string }) => e.value)?.descripcion ?? '';
           const probPrec = getPeriodValue(dia.probPrecipitacion) ?? '—';
-          const viento = dia.viento?.[0];
+          const viento = dia.viento?.find((v: { velocidad?: number; direccion?: string }) => v.velocidad) ?? dia.viento?.[0];
           const uv = dia.uvMax ?? null;
 
           return (
@@ -48,9 +48,9 @@ export function DailyForecastPanel({ cod }: { cod: string }) {
               </div>
 
               {/* Sky */}
-              <div className="flex items-center gap-1 w-28">
-                <span className="text-2xl">{sky.emoji}</span>
-                <span className="text-xs text-slate-500 dark:text-slate-400 leading-tight">{sky.label}</span>
+              <div className="flex items-center gap-2 w-36">
+                <SkyIcon code={skyCode} size={24} />
+                <span className="text-xs text-slate-500 dark:text-slate-400 leading-tight">{skyLabel(skyCode, skyDesc)}</span>
               </div>
 
               {/* Temp */}
@@ -140,9 +140,10 @@ function HourlyTabs({ dias }: { dias: any[] }) {
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {(dia.temperatura ?? []).map((t: any) => {
             const periodo = String(t.periodo);
-            const skyVal = dia.estadoCielo?.find((s: { periodo?: string }) => s.periodo === periodo)?.value
-              ?? dia.estadoCielo?.find((s: { value?: string }) => s.value)?.value ?? '';
-            const sky = getSkyInfo(skyVal);
+            const cieloEntry = dia.estadoCielo?.find((s: { periodo?: string }) => s.periodo === periodo)
+              ?? dia.estadoCielo?.find((s: { value?: string }) => s.value);
+            const skyCode = cieloEntry?.value ?? '';
+            const skyDesc = cieloEntry?.descripcion ?? '';
             const precip = dia.precipitacion?.find((p: { periodo?: string }) => p.periodo === periodo)?.value ?? 0;
             const probPrec = dia.probPrecipitacion?.find((p: { periodo?: string }) => p.periodo === periodo)?.value ?? null;
             const wind = dia.vientoAndRachaMax?.find((v: { periodo?: string }) => v.periodo === periodo);
@@ -155,7 +156,8 @@ function HourlyTabs({ dias }: { dias: any[] }) {
                 className="flex flex-col items-center gap-1 bg-white dark:bg-slate-800 rounded-2xl px-3 py-3 shadow-sm min-w-18"
               >
                 <span className="text-xs font-medium text-slate-500">{periodo.padStart(2, '0')}:00</span>
-                <span className="text-xl">{sky.emoji}</span>
+                <SkyIcon code={skyCode} size={28} />
+                {skyCode && <span className="text-center text-[9px] text-slate-400 leading-tight w-full">{skyLabel(skyCode, skyDesc)}</span>}
                 <span className="text-sm font-bold text-orange-500">{t.value}°</span>
                 {sensT !== null && <span className="text-xs text-slate-400">ST {sensT}°</span>}
                 {hum !== null && (

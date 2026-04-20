@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Thermometer, Droplets, Wind, Umbrella, Eye, Gauge } from 'lucide-react';
 import { useForecast } from '@/hooks/useForecast';
 import { getSkyInfo, formatDate, windDirArrow, uvColor } from '@/lib/weather';
+import { SkyIcon, skyLabel } from '@/components/SkyIcon';
 import { DailyForecastPanel, HourlyForecastPanel } from '@/components/ForecastPanels';
 
 export default function MunicipioPage({ params }: { params: Promise<{ cod: string }> }) {
@@ -18,7 +19,9 @@ export default function MunicipioPage({ params }: { params: Promise<{ cod: strin
   const provincia = data?.[0]?.provincia ?? '';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hoy = (data?.[0]?.prediccion?.dia as any[])?.[0];
-  const sky = hoy ? getSkyInfo(hoy.estadoCielo?.find((e: { value?: string }) => e.value)?.value ?? '') : null;
+  const skyCode = hoy?.estadoCielo?.find((e: { value?: string }) => e.value)?.value ?? '';
+  const skyDesc = hoy?.estadoCielo?.find((e: { value?: string }) => e.value)?.descripcion ?? '';
+  const sky = skyCode ? { label: skyLabel(skyCode, skyDesc) } : null;
 
   return (
     <div className="space-y-6">
@@ -34,7 +37,7 @@ export default function MunicipioPage({ params }: { params: Promise<{ cod: strin
         {hoy && sky && (
           <>
             <div className="mt-4 flex items-center gap-4">
-              <span className="text-6xl">{sky.emoji}</span>
+              <SkyIcon code={skyCode} size={64} className="opacity-90" />
               <div>
                 <p className="text-5xl font-bold">{hoy.temperatura?.maxima}°</p>
                 <p className="text-white/70">{sky.label}</p>

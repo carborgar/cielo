@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
 import { useForecast } from '@/hooks/useForecast';
-import { getSkyInfo } from '@/lib/weather';
+import { SkyIcon, skyLabel } from '@/components/SkyIcon';
 import { useMunicipios } from '@/context/MunicipiosContext';
 import type { SavedMunicipio } from '@/types/aemet';
 import clsx from 'clsx';
@@ -16,7 +16,8 @@ export function MunicipioCard({ m }: { m: SavedMunicipio }) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hoy = (data?.[0]?.prediccion?.dia as any[])?.[0];
-  const sky = hoy ? getSkyInfo(hoy.estadoCielo?.find((e: { value?: string }) => e.value)?.value ?? '') : null;
+  const skyCode = hoy?.estadoCielo?.find((e: { value?: string }) => e.value)?.value ?? '';
+  const skyDesc = hoy?.estadoCielo?.find((e: { value?: string }) => e.value)?.descripcion ?? '';
 
   return (
     <Link
@@ -40,11 +41,11 @@ export function MunicipioCard({ m }: { m: SavedMunicipio }) {
 
       {loading && <div className="mt-3 h-8 w-32 rounded-xl bg-white/20 animate-pulse" />}
 
-      {sky && hoy && (
+      {skyCode && hoy && (
         <div className="mt-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-4xl">{sky.emoji}</span>
-            <span className="text-sm text-white/80">{sky.label}</span>
+            <SkyIcon code={skyCode} size={40} className="opacity-90" />
+            <span className="text-sm text-white/80">{skyLabel(skyCode, skyDesc)}</span>
           </div>
           <div className="text-right">
             <p className="text-3xl font-bold">{hoy.temperatura?.maxima}°</p>
