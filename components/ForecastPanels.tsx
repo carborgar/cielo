@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useForecast } from '@/hooks/useForecast';
-import { getSkyInfo, formatDate, windDirArrow, uvColor } from '@/lib/weather';
+import { formatDate, windDirArrow } from '@/lib/weather';
 import { SkyIcon, skyLabel } from '@/components/SkyIcon';
-import { Thermometer, Droplets, Wind, Umbrella, Snowflake, Zap } from 'lucide-react';
+import { Droplets, Wind, Umbrella, Snowflake, Zap } from 'lucide-react';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getPeriodValue(arr: any[], periodo?: string) {
@@ -35,7 +35,6 @@ export function DailyForecastPanel({ cod }: { cod: string }) {
           const skyDesc = dia.estadoCielo?.find((e: { value?: string }) => e.value)?.descripcion ?? '';
           const probPrec = getPeriodValue(dia.probPrecipitacion) ?? '—';
           const viento = dia.viento?.find((v: { velocidad?: number; direccion?: string }) => v.velocidad) ?? dia.viento?.[0];
-          const uv = dia.uvMax ?? null;
 
           return (
             <div
@@ -54,30 +53,22 @@ export function DailyForecastPanel({ cod }: { cod: string }) {
               </div>
 
               {/* Temp */}
-              <div className="flex items-center gap-1 ml-auto">
-                <Thermometer size={14} className="text-orange-400" />
+              <div className="flex flex-col items-center gap-0.5 ml-auto">
                 <span className="text-sm font-semibold text-orange-500">{dia.temperatura?.maxima}°</span>
-                <span className="text-sm text-slate-400">/ {dia.temperatura?.minima}°</span>
+                <span className="text-xs text-slate-400">{dia.temperatura?.minima}°</span>
               </div>
 
               {/* Rain */}
-              <div className="flex items-center gap-1 w-12 justify-end">
+              <div className="flex flex-col items-center gap-0.5 w-10">
                 <Umbrella size={13} className="text-sky-400" />
                 <span className="text-xs text-sky-500">{probPrec}%</span>
               </div>
 
               {/* Wind */}
               {viento && (
-                <div className="flex items-center gap-1 w-16 justify-end">
+                <div className="flex flex-col items-center gap-0.5 w-10">
                   <Wind size={13} className="text-slate-400" />
                   <span className="text-xs text-slate-500">{windDirArrow(viento.direccion)} {viento.velocidad}</span>
-                </div>
-              )}
-
-              {/* UV */}
-              {uv && (
-                <div className="w-10 text-right">
-                  <span className={`text-xs font-bold ${uvColor(Number(uv))}`}>UV {uv}</span>
                 </div>
               )}
             </div>
